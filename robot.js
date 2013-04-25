@@ -136,69 +136,76 @@ function keyDown(evt)
 	var t = evt.target;
 	var kc = evt.which ? evt.which : evt.keyCode, isSafari = navigator.userAgent.toLowerCase().indexOf("safari") != -1;
 
-	if (kc == 9 || (isSafari && kc == 25))
-	{
-	t.focus();
-
-	// hack for ie
-	if (!t.selectionStart)
-	{
-		var range = document.selection.createRange();
-		var stored_range = range.duplicate();
-		stored_range.moveToElementText(t);
-		stored_range.setEndPoint('EndToEnd', range);
-		t.selectionStart = stored_range.text.length - range.text.length;
-		t.selectionEnd = t.selectionStart + range.text.length;
-		t.setSelectionRange = function(start, end){
-			var range = this.createTextRange();
-			range.collapse(true);
-			range.moveStart("character", start);
-			range.moveEnd("character", end - start);
-			range.select();
+	if (kc == 9 || (isSafari && kc == 25)){
+		t.focus();
+		evt.preventDefault();
+		var tab = '    ',tablen = tab.length,  tab_regexp = /\n\s\s\s\s/g;
+		if(t.value.length == 0){
+			t.value = tab;
+			return;
 		}
-	}
-
-	var tab = '    ',tablen = tab.length,  tab_regexp = /\n\s\s\s\s/g;
-	var ss = t.selectionStart, se = t.selectionEnd, ta_val = t.value, sel = ta_val.slice(ss, se); shft = (isSafari && kc == 25) || evt.shiftKey;
-	var was_tab = ta_val.slice(ss - tablen, ss) == tab, starts_with_tab = ta_val.slice(ss, ss + tablen) == tab, offset = shft ? 0-tablen : tablen, full_indented_line = false, num_lines = sel.split("\n").length;
-
-	if (ss != se && sel[sel.length-1] == '\n') { se--; sel = ta_val.slice(ss, se); num_lines--; }
-	if (num_lines == 1 && starts_with_tab) full_indented_line = true;
-
-	if (!shft || was_tab || num_lines > 1 || full_indented_line)
-	{
-		// multi-line selection
-		if (num_lines > 1)
+		// hack for ie
+		if (!t.selectionStart && document.selection)
 		{
-		// tab each line
-			if (shft && (was_tab || starts_with_tab) && sel.split(tab_regexp).length == num_lines)
-			{
-			if (!was_tab) sel = sel.substring(tablen);
-				t.value = ta_val.slice(0, ss - (was_tab ? tablen : 0)).concat(sel.replace(tab_regexp, "\n")).concat(ta_val.slice(se, ta_val.length));
-				ss += was_tab ? offset : 0; se += offset * num_lines;
-			}
-			else if (!shft)
-			{
-				t.value = ta_val.slice(0, ss).concat(tab).concat(sel.replace(/\n/g, "\n" + tab)).concat(ta_val.slice(se, ta_val.length));
-				se += offset * num_lines;
+			var range = document.selection.createRange();
+			var stored_range = range.duplicate();
+			stored_range.moveToElementText(t);
+			stored_range.setEndPoint('EndToEnd', range);
+			t.selectionStart = stored_range.text.length - range.text.length;
+			t.selectionEnd = t.selectionStart + range.text.length;
+			t.setSelectionRange = function(start, end){
+				var range = this.createTextRange();
+				range.collapse(true);
+				range.moveStart("character", start);
+				range.moveEnd("character", end - start);
+				range.select();
 			}
 		}
+		var tab = '    ',tablen = tab.length,  tab_regexp = /\n\s\s\s\s/g;
+		/*if(t.value.length == 0){
+			t.value = tab;
+			return;
+		}*/
+		var ss = t.selectionStart, se = t.selectionEnd, ta_val = t.value, sel = ta_val.slice(ss, se); shft = (isSafari && kc == 25) || evt.shiftKey;
+		var was_tab = ta_val.slice(ss - tablen, ss) == tab, starts_with_tab = ta_val.slice(ss, ss + tablen) == tab, offset = shft ? 0-tablen : tablen, full_indented_line = false, num_lines = sel.split("\n").length;
 
-		// single-line selection
-		else{
-		if (shft)
-		t.value = ta_val.slice(0, ss - (full_indented_line ? 0 : tablen)).concat(ta_val.slice(ss + (full_indented_line ? tablen : 0), ta_val.length));
-		else
-		t.value = ta_val.slice(0, ss).concat(tab).concat(ta_val.slice(ss, ta_val.length));
+		if (ss != se && sel[sel.length-1] == '\n') { se--; sel = ta_val.slice(ss, se); num_lines--; }
+		if (num_lines == 1 && starts_with_tab) full_indented_line = true;
 
-		if (ss == se)
-		ss = se = ss + offset;
-		else
-		se += offset;
+		if (!shft || was_tab || num_lines > 1 || full_indented_line)
+		{
+			// multi-line selection
+			if (num_lines > 1)
+			{
+			// tab each line
+				if (shft && (was_tab || starts_with_tab) && sel.split(tab_regexp).length == num_lines)
+				{
+				if (!was_tab) sel = sel.substring(tablen);
+					t.value = ta_val.slice(0, ss - (was_tab ? tablen : 0)).concat(sel.replace(tab_regexp, "\n")).concat(ta_val.slice(se, ta_val.length));
+					ss += was_tab ? offset : 0; se += offset * num_lines;
+				}
+				else if (!shft)
+				{
+					t.value = ta_val.slice(0, ss).concat(tab).concat(sel.replace(/\n/g, "\n" + tab)).concat(ta_val.slice(se, ta_val.length));
+					se += offset * num_lines;
+				}
+			}
+
+			// single-line selection
+			else{
+			if (shft)
+			t.value = ta_val.slice(0, ss - (full_indented_line ? 0 : tablen)).concat(ta_val.slice(ss + (full_indented_line ? tablen : 0), ta_val.length));
+			else
+			t.value = ta_val.slice(0, ss).concat(tab).concat(ta_val.slice(ss, ta_val.length));
+
+			if (ss == se)
+			ss = se = ss + offset;
+			else
+			se += offset;
+			}
 		}
-	}
-	setTimeout("var t=$('" + t.id + "'); t.focus(); t.setSelectionRange(" + ss + ", " + se + ");", 0);
-	return false;
+		setTimeout("var t=$('" + t.id + "'); t.focus(); t.setSelectionRange(" + ss + ", " + se + ");", 0);
+		return false;
 	}
 }
 
