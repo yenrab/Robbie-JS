@@ -30,6 +30,9 @@ h1 {
 	color: rgb(191,121,16);
 	text-shadow: black 0px 3px 3px;
 }
+.sub{
+	font-size: 12px;
+}
 h3 {
 	text-align: center;
 	color: rgb(191,121,16);
