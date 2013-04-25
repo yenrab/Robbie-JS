@@ -1,0 +1,236 @@
+
+<!--
+	 Copyright (c) 2012 Rex Barzee and Lee Barney
+ Permission is hereby granted, free of charge, to any person obtaining a 
+ copy of this software and associated documentation files (the "Software"), 
+ to deal in the Software without restriction, including without limitation the 
+ rights to use, copy, modify, merge, publish, distribute, sublicense, 
+ and/or sell copies of the Software, and to permit persons to whom the Software 
+ is furnished to do so, subject to the following conditions:
+ 
+ The above copyright notice and this permission notice shall be 
+ included in all copies or substantial portions of the Software.
+ 
+ 
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+ INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
+ PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
+ HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
+ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
+ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+-->
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Robbie JS</title>
+<link rel="stylesheet" type="text/css" href="robot.css">
+<script type="text/javascript" src="robot.js"></script>
+<script id="funcScript" type="text/javascript"></script>
+</head>
+
+<body onload="setup()">
+<h1>Robbie JS</h1>
+<div class='displayPair'>
+<div class="display textDisplay leftFloat">
+		<div id="functionStartDiv" class="hidden">function run() {</div>
+		<textarea id="code" title="Code"></textarea>
+		<div id="functionEndDiv" class="hidden">}</div>
+</div>
+<div class="instructions display">
+	<h3>Instructions</h3>
+<span id="intro" class="hidden">
+<p>Type commands in the <span class="menu">code text area</span> to
+cause Robbie the Robot to move from the upper left corner to the lower
+right corner of the <span class="menu">robot arena</span>.&nbsp; On the
+way to the lower right corner Robbie must pass over the center dot in
+the middle row and the center dot in the bottom row.&nbsp; The commands
+that you can use are</p>
+<ul>
+	<li>moveForward();</li>
+	<li>moveBackward();</li>
+	<li>turnLeft();</li>
+	<li>turnRight();</li>
+	<li>print("Any message here");</li>
+</ul>
+</span>
+
+<span id="select" class="hidden">
+<p>Type commands in the <span class="menu">code text area</span> to
+cause Robbie the Robot to move within the robot arena</p>
+<ul>
+    <li>from the upper left corner to the lower left corner if today is
+    Monday, Wednesday, or Friday,</li>
+    <li>from the upper left corner to the upper right corner if today is
+    Tuesday or Thursday,</li>
+    <li>from the upper left corner to the lower right corner if today is
+    Saturday or Sunday.</li>
+</ul>
+Your code must include this statement to determine what day of the week
+today is.
+<pre>var day = new Date().getDay();</pre>
+After the computer executes that statement, the variable
+<code>day</code> will hold 0 if today is Sunday, 1 if today is Monday,
+and so on to 6 if today is Saturday.&nbsp; Your code must also include
+several if statements and some or all of these commands inside the if
+statements.
+<ul>
+	<li>moveForward();</li>
+	<li>moveBackward();</li>
+	<li>turnLeft();</li>
+	<li>turnRight();</li>
+	<li>print("Any message here");</li>
+</ul>
+For example:
+<pre>var day = new Date().getDay();
+if (day == 1) {
+    turnRight();
+}
+else {
+    turnLeft();
+}</pre>
+</span>
+
+<span id="repeat" class="hidden">
+<p>Type commands in the <span class="menu">code text area</span> to
+cause Robbie the Robot to move from the upper left corner to the lower
+right corner of the <span class="menu">robot arena</span>.&nbsp; On the
+way to the lower right corner Robbie must pass over the center dot in
+the middle row and the center dot in the bottom row.&nbsp; The commands
+that you write must include <b>at least three repetition control
+structures (loops)</b> with some or all of these commands inside the
+loops.
+<ul>
+	<li>moveForward();</li>
+	<li>moveBackward();</li>
+	<li>turnLeft();</li>
+	<li>turnRight();</li>
+	<li>print("Any message here");</li>
+</ul>
+For example:
+<pre>for (var i = 1;  i &lt;= 5;  i++) {
+    moveForward();
+}</pre>
+</span>
+
+<span id="func" class="hidden">
+<p>Type commands in the <span class="menu">code text area</span> to
+cause Robbie the Robot to move from the upper left corner to the lower
+right corner of the <span class="menu">robot arena</span>.&nbsp; On the
+way to the lower right corner Robbie must pass over the center dot in
+the middle row and the center dot in the bottom row.&nbsp; The code that
+you write must include <b>five functions</b> with these signatures:</p>
+<ul>
+	<li>run()</li>
+	<li>forward(spaces)</li>
+	<li>backward(spaces)</li>
+	<li>left(quarterTurns)</li>
+	<li>right(quarterTurns)</li>
+</ul>
+The <code>run</code> function must call all of the other four functions.
+Each of the last four functions has one integer parameter that specifies
+how many spaces to move forward or backward or how many quarter turns to
+make.&nbsp; You must write each of the last four functions so that it
+calls the correct one of these existing functions:
+<ul>
+	<li>moveForward();</li>
+	<li>moveBackward();</li>
+	<li>turnLeft();</li>
+	<li>turnRight();</li>
+	<li>print("Any message here");</li>
+</ul>
+</span>
+
+<span id="array" class="hidden">
+<p>Your teacher has created an array of commands for Robbie.&nbsp; The
+array is named <code>commands</code>, and each command is simply a
+string of text.&nbsp; To make Robbie move, you will not type the
+<code>moveForward</code>, <code>moveBackward</code>,
+<code>turnLeft</code>, or <code>turnRight</code> commands.&nbsp; Instead
+you will write a loop to retrieve and process each of the commands one
+at a time from the <code>commands</code> array.&nbsp; Inside the loop,
+you must write at least two statements: the first to retrieve the
+command and assign it to a variable and the second to process the
+command by calling the
+<a href="http://www.w3schools.com/jsref/jsref_eval.asp" target="_blank">
+<code>eval</code> function</a>
+and passing the command to the <code>eval</code> function.&nbsp; The
+<code>eval</code> function will execute the command.&nbsp; You
+will know you have written the code correctly if when you run it, Robbie
+prints a message to the <span class="menu">output text area</span> and
+traces the shape of an English letter in the <span class="menu">robot
+arena</span> as he moves.</p>
+</span>
+</div>
+</div>
+<div class='displayPair'>
+<div id="arena" class="display leftFloat" title="Robot Arena"></div>
+
+<div id="output" class="display instructions debugDisplay" title="Debug Messages"><h3>Print Messages</h3></div>
+</div>
+<div id="buttons">
+	<div id="tools" class="leftFloat">
+			<div class='menuButton black' onclick="runCode()">
+				<img src="run.png" alt="Run"><br>Run
+			</div>
+			<div class='menuButton black'
+				onclick="resetRobbie()">
+				<img src="reset.png" alt="Reset"/><br>Reset
+			</div>
+			<div class='menuButton black'
+				onclick="resetRobbie(); clearOutput(); clearCode()">
+				<img src="clear.png" alt="Clear"/><br>Clear
+			</div>
+			<div class='menuButton black'
+				onclick="saveFile()">
+				<img src="save.png" alt="Save"/><br>Save
+			</div>
+			<div class='menuButton black'
+				onclick="saveFile(true)">
+				<img src="save_as.png" alt="Save As"/><br>Save As
+			</div>
+			<div class='menuButton black'
+				onclick="openFile()">
+				<img src="load.png" alt="Load"/><br>Load
+			</div>
+	</div>
+	<div id="assignments" class="leftFloat">
+			<div class='menuButton orange'
+				onclick="displayAssignment('intro')">
+				<img src="project.png" alt="intro"/><br/>
+				Intro
+			</div>
+			<div class='menuButton orange'
+				onclick="displayAssignment('select')">
+				<img src="project.png" alt="select"/><br/>
+				Select
+			</div>
+			<div class='menuButton orange'
+				onclick="displayAssignment('repeat')">
+				<img src="project.png" alt="repeat"/><br/>
+				Repeat
+			</div>
+			<div class='menuButton orange'
+				onclick="displayAssignment('func')">
+				<img src="project.png" alt="function"/><br/>
+				Function
+			</div>
+			<div class='menuButton orange'
+				onclick="displayAssignment('array')">
+				<img src="project.png" alt="array"/><br/>
+				Array
+			</div>
+		</div>
+	</div>
+	<!-- some dialog boxes -->
+	<div id=openDialog>
+	  <div class='dialogHeader'>Open File</div>
+	  <div id=fileListHolder>
+		<select id=fileList size=5></select>
+
+	  </div>
+	  <div id=buttonBar >
+		<input type=button value=Cancel onclick=readFile(this) /><input type=button value=Open onclick=readFile(this) />
+	  </div>
+</body>
+</html>
