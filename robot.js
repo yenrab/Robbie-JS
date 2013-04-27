@@ -64,24 +64,25 @@ function displayAssignment(type){
 	if(!type){
 		type = 'intro';
 	}
-	if (assignments.indexOf(type) != -1) {
-		$(type).style.display = 'block';
-		if(currentAssignment){
-			$(currentAssignment).style.display = 'none';
+	if(currentAssignment != type){
+		if (assignments.indexOf(type) != -1) {
+			$(type).style.display = 'block';
+			if(currentAssignment){
+				$(currentAssignment).style.display = 'none';
+			}
 		}
-	}
-	var displayFunction = 'inline';
-	if (needFuncHeader.indexOf(type) == -1) {
-		displayFunction = 'none';
-	}
-	$("functionStartDiv").style.display = displayFunction;
-	$("functionEndDiv").style.display = displayFunction;
-	currentAssignment = type;
+		var displayFunction = 'inline';
+		if (needFuncHeader.indexOf(type) == -1) {
+			displayFunction = 'none';
+		}
+		$("functionStartDiv").style.display = displayFunction;
+		$("functionEndDiv").style.display = displayFunction;
+		currentAssignment = type;
 
-	resetRobbie();
-	clearCode();
-	clearOutput();
-
+		resetRobbie();
+		clearCode();
+		clearOutput();
+	}
 	return type;
 }
 function setup(type) {
@@ -396,12 +397,17 @@ function saveFile(shouldSaveAs) {
 function openFile(){
 	
 	var selector = document.getElementById('fileList');
+	var defaultSet = false;
 	for(var retrievedFileName in localStorage){
 		if(retrievedFileName.indexOf(htPrefix) == 0){
 			retrievedFileName = retrievedFileName.substring(4);
 			var anOption = document.createElement('option');
 			anOption.value = retrievedFileName;
 			anOption.innerText = retrievedFileName;
+			if(!defaultSet){
+				anOption.selected = 'selected';
+				defaultSet = true;
+			}
 			selector.appendChild(anOption);
 		}
 	}
