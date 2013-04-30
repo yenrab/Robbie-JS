@@ -250,13 +250,15 @@ function resetRobbie() {
 		var bean = robot.bean;
 		bean.row = 0;
 		bean.col = 0;
+		bean.rotation = 90;
+
 		robot.style.left = '0px';
 		robot.style.top = '0px';
 		robot.style.webkitTransform = '';
-		robot.style.MozTransform = 'rotate('+rot+'deg)';
-	    robot.style.msTransform = 'rotate('+rot+'deg)';
-	    robot.style.OTransform = 'rotate('+rot+'deg)';
-		robot.style.transform = 'rotate('+rot+'deg)';
+		robot.style.MozTransform = '';
+	    robot.style.msTransform = '';
+	    robot.style.OTransform = '';
+		robot.style.transform = '';
 	}
 }
 
