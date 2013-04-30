@@ -252,6 +252,11 @@ function resetRobbie() {
 		bean.col = 0;
 		robot.style.left = '0px';
 		robot.style.top = '0px';
+		robot.style.webkitTransform = '';
+		robot.style.MozTransform = 'rotate('+rot+'deg)';
+	    robot.style.msTransform = 'rotate('+rot+'deg)';
+	    robot.style.OTransform = 'rotate('+rot+'deg)';
+		robot.style.transform = 'rotate('+rot+'deg)';
 	}
 }
 
@@ -364,7 +369,6 @@ function rotate(degrees) {
 	rot += degrees;
 	bean.rotation = rot;
 	robot.style.webkitTransform = 'rotate('+rot+'deg)';
-	robot.style.webkitTransform = 'rotate('+rot+'deg)';
 	robot.style.MozTransform = 'rotate('+rot+'deg)';
     robot.style.msTransform = 'rotate('+rot+'deg)';
     robot.style.OTransform = 'rotate('+rot+'deg)';
@@ -403,7 +407,7 @@ function openFile(){
 			retrievedFileName = retrievedFileName.substring(4);
 			var anOption = document.createElement('option');
 			anOption.value = retrievedFileName;
-			anOption.innerText = retrievedFileName;
+			anOption.innerHTML = retrievedFileName;
 			if(!defaultSet){
 				anOption.selected = 'selected';
 				defaultSet = true;
