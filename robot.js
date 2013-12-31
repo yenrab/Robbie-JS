@@ -51,34 +51,36 @@ var commands = [
 	'print("\'H\' is correct.")'
 ];
 
-function $(id){
+function getId(id){
 	return document.getElementById(id);
 }
 
+//this was to enable the proper code reset
+var displayFunction = true;
 var currentAssignment = null;
 function displayAssignment(type){
+	getId('introButton').className = "btn btn-primary"
 	// Make the correct instructions visible.
 	if(!type){
 		type = window.location.search.substring(1);
 	}
 	if(!type){
 		type = 'intro';
+		setActiveAssignButton(type);
 	}
 	if(currentAssignment != type){
 		if (assignments.indexOf(type) != -1) {
-			$(type).style.display = 'block';
+			getId(type).style.display = 'block'
 			if(currentAssignment){
-				$(currentAssignment).style.display = 'none';
+				getId(currentAssignment).style.display = 'none';
 			}
 		}
-		var displayFunction = 'inline';
+		displayFunction = true;
 		if (needFuncHeader.indexOf(type) == -1) {
-			displayFunction = 'none';
+			displayFunction = false;
 		}
-		$("functionStartDiv").style.display = displayFunction;
-		$("functionEndDiv").style.display = displayFunction;
-		currentAssignment = type;
 
+		currentAssignment = type;
 		resetRobbie();
 		clearCode();
 		clearOutput();
@@ -87,7 +89,7 @@ function displayAssignment(type){
 }
 function setup(type) {
 	displayAssignment(type);
-	var arena = $('arena');
+	var arena = getId('arena');
 
 	// Create image nodes for the dots and place them in the arena.
 	for (var i = 0;  i < 35;  i++) {
@@ -99,8 +101,8 @@ function setup(type) {
 	if(robot){
 		arena.appendChild(robot);
 	}
-	// Allow students to type the tab key in the code textarea.
-	$('code').onkeydown = keyDown;
+	// Allow students to type the tab key in the editor textarea.
+	// getId('editor').onkeydown = keyDown;
 }
 
 function createDot() {
@@ -112,7 +114,7 @@ function createDot() {
 
 function createRobot() {
 	var robot = null;
-	if(!$('robot')){
+	if(!getId('robot')){
 		robot = document.createElement('img');
 		robot.id = 'robot';
 		robot.src = 'robot.png';
@@ -205,7 +207,7 @@ function keyDown(evt)
 			se += offset;
 			}
 		}
-		setTimeout("var t=$('" + t.id + "'); t.focus(); t.setSelectionRange(" + ss + ", " + se + ");", 0);
+		setTimeout("var t=getId('" + t.id + "'); t.focus(); t.setSelectionRange(" + ss + ", " + se + ");", 0);
 		return false;
 	}
 }
@@ -213,16 +215,16 @@ function keyDown(evt)
 
 function runCode() {
 	// Remove the old script tag.
-	var script = $('funcScript');
+	var script = getId('funcScript');
 	var scriptParent = script.parentNode;
 	scriptParent.removeChild(script);
 	script = document.createElement('script');
 	script.id = 'funcScript';
 	// Get the code the user typed.
-	var code = $('code').value;
-	if (needFuncHeader.indexOf(currentAssignment) != -1) {
-		code = 'function run() {'+code+'}';
-	}
+	var code = editor.getValue();
+	// if (needFuncHeader.indexOf(currentAssignment) != -1) {
+	// 	code = 'function run() {'+code+'}';
+	// }
 
 	// Copy the code to the script tag.
 	script.innerHTML = code;
@@ -245,7 +247,7 @@ function runQueue() {
 
 
 function resetRobbie() {
-	var robot = $('robot');
+	var robot = getId('robot');
 	if(robot){
 		var bean = robot.bean;
 		bean.row = 0;
@@ -261,13 +263,25 @@ function resetRobbie() {
 		robot.style.transform = '';
 	}
 }
-
+var editor;
 function clearCode() {
-	$('code').value ='';
+	editor = ace.edit("editor");
+    editor.setTheme("ace/theme/textmate");
+    editor.getSession().setMode("ace/mode/javascript");
+    editor.setShowPrintMargin(false);
+    editor.getSession().setTabSize(4);
+    editor.getSession().setUseSoftTabs(true);
+    if (displayFunction) {
+	    editor.setValue("function run() {\n\t//Your code goes here.\n}");
+    } else{
+    	editor.setValue("//Your code goes here.");
+    }
+    editor.gotoLine(1);
+    getId('funcScript').innerHTML = '';
 }
 
 function clearOutput() {
-	$('output').innerHTML = '<h3>Print Messages</h3>';
+	getId('output').innerHTML = '';
 }
 
 
@@ -308,7 +322,7 @@ function offset(aNode){
 function move(direction) {
 
 	// Get the rotation and normalize it to be between [0, 360)
-	var robot = $('robot');
+	var robot = getId('robot');
 	var bean = robot.bean;
 	var rot = bean.rotation;
 	while (rot < 0) {
@@ -323,7 +337,7 @@ function move(direction) {
 		direc *= -1;
 	}
 
-	var arena = $('arena');
+	var arena = getId('arena');
 	var arenaOffset = offset(arena);
 	var robotOffset = offset(robot);
 	if (rot == 90 || rot == 270) {
@@ -365,7 +379,7 @@ function move(direction) {
 
 
 function rotate(degrees) {
-	var robot = $('robot');
+	var robot = getId('robot');
 	var bean = robot.bean;
 	var rot = bean.rotation;
 	rot += degrees;
@@ -379,7 +393,7 @@ function rotate(degrees) {
 
 
 function debug(msg) {
-	var output = $('output');
+	var output = getId('output');
 	output.innerHTML += msg + '<br>';
 }
 
@@ -388,56 +402,102 @@ function debug(msg) {
  */
 var htPrefix = 'h_t_';
 var curFileName = null;
-function saveFile(shouldSaveAs) {
-	if(curFileName == null || shouldSaveAs){
-		var fileName=window.prompt("Save File: ");
-		if(fileName == null){
+function saveFile(shouldSaveAs, fromSaveAs) {
+	if (shouldSaveAs) {
+		var fileName = getId('saveName').value;
+		if(fileName == null || fileName == ""){
+			$('.form-group').addClass('has-error');
+			$('#saveError').html('You must enter a File Name.');
+			$('#saveName').focus();
 			return;
 		}
 		curFileName = fileName;
 	}
-	var dataToStore = [currentAssignment,escape(document.getElementById('code').value)];
+	else if (curFileName == null) {
+		$('#saveAsButton').popover('show');
+		return;
+	}
+	var dataToStore = [currentAssignment,escape(editor.getValue())];
 	localStorage.setItem(htPrefix+curFileName, JSON.stringify(dataToStore));
+	if (fromSaveAs) {
+		$('.form-group').removeClass('has-error');
+		$('#saveError').html(' ');
+		$('#saveSuccess').html('Save Successful!');
+		$('#saveOk').hide();
+		$('#saveCancel').hide();
+		$('#saveFinalOk').removeClass('hidden');
+	}
 }
 
-function openFile(){
-	
-	var selector = document.getElementById('fileList');
-	var defaultSet = false;
-	for(var retrievedFileName in localStorage){
-		if(retrievedFileName.indexOf(htPrefix) == 0){
-			retrievedFileName = retrievedFileName.substring(4);
-			var anOption = document.createElement('option');
-			anOption.value = retrievedFileName;
-			anOption.innerHTML = retrievedFileName;
-			if(!defaultSet){
-				anOption.selected = 'selected';
-				defaultSet = true;
-			}
-			selector.appendChild(anOption);
+var hasOpen = false;
+function closePopovers(button){
+	if (button == 'hideSaveAs'){
+		if (hasOpen) {
+			$('#saveAsButton').click();	
 		}
 	}
-	document.getElementById('openDialog').style.display = 'block';
+	if (button == 'hideLoad') {
+		if (hasOpen) {
+			$('#loadButton').click();
+		}
+	}
+	else{
+		$(button).click();
+	}
 }
 
-function readFile(aButton) {
-	var selector = $('fileList');
-	$('openDialog').style.display = 'none';
-	if(aButton.value == 'Open'){
-		resetRobbie();
-		clearCode();
-		clearOutput();
-		/*
-		*	get the name of the selected file
-		*/
-		if(selector.selectedIndex >=0){
-			var name = selector.options[selector.selectedIndex].value;
-			curFileName = name;
-			var rawData = localStorage[htPrefix+curFileName];
-			var selectedData = JSON.parse(localStorage[htPrefix+curFileName]);
-			setup(selectedData[0]);
-			$('code').value = unescape(selectedData[1]);
+var lastNumberOfFiles    = 0;
+var currentNumberOfFiles = 0;
+function openFile(){
+	var selector = document.getElementById('fileList');
+	selector.innerHTML = '';
+	// console.log(selector.length + "first")
+	// currentNumberOfFiles = selector.length
+	// if (currentNumberOfFiles == 0 || cu){
+		var defaultSet = false;
+		for(var retrievedFileName in localStorage){
+			if(retrievedFileName.indexOf(htPrefix) == 0){
+				retrievedFileName = retrievedFileName.substring(4);
+				var anOption = document.createElement('option');
+				anOption.value = retrievedFileName;
+				anOption.innerHTML = retrievedFileName;
+				if(!defaultSet){
+					anOption.selected = 'selected';
+					defaultSet = true;
+				}
+				selector.appendChild(anOption);
+			}
 		}
+	// 			console.log(selector.length + "second")
+	// }
+	// else{
+	// 	return;
+	// }
+}
+
+function readFile() {
+	var selector = getId('fileList');
+	closePopovers('#loadButton');
+	resetRobbie();
+	clearCode();
+	clearOutput();
+	/*
+	*	get the name of the selected file
+	*/
+	if(selector.selectedIndex >=0){
+		var name = selector.options[selector.selectedIndex].value;
+		curFileName = name;
+		var rawData = localStorage[htPrefix+curFileName];
+		var selectedData = JSON.parse(localStorage[htPrefix+curFileName]);
+		setup(selectedData[0]);
+		setActiveAssignButton(unescape(selectedData[0]));
+		editor.setValue(unescape(selectedData[1]));
+		editor.gotoLine(1);
 	}
 	selector.innerHTML = '';
+}
+
+function setActiveAssignButton(assignTitle){
+	var buttonId = assignTitle + "Button";
+	getId(buttonId).className += " active";
 }
